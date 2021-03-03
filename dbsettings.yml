@@ -1,0 +1,3 @@
+page_size : 4096
+cache_size  : 200
+journal_mode : "WAL"
