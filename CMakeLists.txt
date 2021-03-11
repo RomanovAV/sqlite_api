@@ -9,10 +9,9 @@ enable_testing()
 
 include_directories(sqlite-amalgamation-3340100)
 include_directories(inc)
-include_directories(src)
+
 
 add_subdirectory(googletest)
-add_subdirectory(yaml-cpp)
 
 add_executable(DBApi
         sqlite-amalgamation-3340100/sqlite3.c

@@ -22,8 +22,8 @@ Connector::~Connector() {
 	CloseConnection();
 }
 
-void Connector::CloseConnection() {
-	sqlite3_close(db);
+int Connector::CloseConnection() {
+	return sqlite3_close(db) == SQLITE_OK ? 0 : -1;
 }
 
 int Connector::ExecuteQuery(const std::string& query) {
