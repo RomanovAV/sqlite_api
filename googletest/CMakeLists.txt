@@ -5,15 +5,17 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 include_directories(../inc)
 include_directories(../)
-set(SOURCES ${DBApi_SOURCE_DIR}/test/connector_test.cpp)
+set(SOURCES ${DBApi_SOURCE_DIR}/test/connector_test.cpp ../test/query_test.cpp)
 
 set(PROJ_SOURCES
-        ${DBApi_SOURCE_DIR}/src/connector.cpp)
+        ${DBApi_SOURCE_DIR}/src/connector.cpp
+        ${DBApi_SOURCE_DIR}/src/query.cpp)
 
 set(PROJ_INCLUDES
         ${DBApi_SOURCE_DIR}/inc/connector.h
         ${DBApi_SOURCE_DIR}/sqlite-amalgamation-3340100/sqlite3.c
-        ${DBApi_SOURCE_DIR}/sqlite-amalgamation-3340100/sqlite3.h)
+        ${DBApi_SOURCE_DIR}/sqlite-amalgamation-3340100/sqlite3.h
+        ${DBApi_SOURCE_DIR}/inc/query.h)
 
 add_executable(google_Tests_run
         ${SOURCES}

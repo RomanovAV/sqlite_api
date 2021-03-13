@@ -17,4 +17,7 @@ add_executable(DBApi
         sqlite-amalgamation-3340100/sqlite3.c
         sqlite-amalgamation-3340100/sqlite3.h
         main.cpp
-        src/connector.cpp inc/connector.h)
+        src/connector.cpp
+        inc/connector.h
+        inc/query.h
+        src/query.cpp)

@@ -7,6 +7,6 @@ const char* SQL = "CREATE TABLE IF NOT EXISTS foo(a,b,c); INSERT INTO FOO VALUES
 int main(int argc, char **argv){
 	Connector conn("sb_unit.db");
 	conn.OpenDB();
-	conn.ExecuteQuery(SQL);
+    conn.ExecuteManagingQuery(SQL);
 	return 0;
 }

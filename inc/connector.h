@@ -3,14 +3,23 @@
 //#include <yaml-cpp/yaml.h>
 #include "sqlite3.h"
 
+class Connection {
+public:
+    Connection(std::string name);
+    sqlite3* db;
+    const std::string name;
+};
+
 class Connector {
 
 public:
-    explicit Connector(std::string name) : db_name(std::move(name)) {};
+    explicit Connector(std::string name) : connection(std::move(name)) {};
 
     int OpenDB();
 
-    int ExecuteQuery(const std::string &query);
+    int ExecuteManagingQuery(const std::string &query);
+
+    Connection GetConnection();
 
     ~Connector();
 
@@ -18,8 +27,7 @@ private:
     const char *SETTINGS = "PRAGMA page_size = 4096; "
                            "PRAGMA cache_size = 200; "
                            "PRAGMA journal_mode = WAL";
-    sqlite3 *db = 0;
-    const std::string db_name;
+    Connection connection;
 
     int ApplyDBSettings(const std::string &filename);
 
