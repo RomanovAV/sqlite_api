@@ -9,7 +9,7 @@ set(SOURCES ${DBApi_SOURCE_DIR}/test/connector_test.cpp ../test/query_test.cpp)
 
 set(PROJ_SOURCES
         ${DBApi_SOURCE_DIR}/src/connector.cpp
-        ${DBApi_SOURCE_DIR}/src/query.cpp)
+        ${DBApi_SOURCE_DIR}/src/query.cpp ../src/error_handler.cpp ../inc/error_handler.h)
 
 set(PROJ_INCLUDES
         ${DBApi_SOURCE_DIR}/inc/connector.h
