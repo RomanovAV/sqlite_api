@@ -13,7 +13,7 @@ public:
 class Connector {
 
 public:
-    explicit Connector(std::string name) : connection(std::move(name)) {};
+    explicit Connector(std::string name) : connection_(std::move(name)) {};
 
     int OpenDB();
 
@@ -27,7 +27,7 @@ private:
     const char *SETTINGS = "PRAGMA page_size = 4096; "
                            "PRAGMA cache_size = 200; "
                            "PRAGMA journal_mode = WAL";
-    Connection connection;
+    Connection connection_;
 
     int ApplyDBSettings(const std::string &filename);
 

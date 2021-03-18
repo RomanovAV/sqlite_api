@@ -6,13 +6,21 @@
 #include "sqlite3.h"
 #include <vector>
 
+enum class QueryState {
+		START,
+		PREPARED,
+		STEP_DONE,
+		RESET,
+		FINALIZED
+};
+
 class Query {
 public:
-		Query(std::string q);
+		Query(const std::string& q);
 
-		void Prepare(Connection& db);
+		void Prepare(Connection db);
 
-		int ExecuteStep();
+		void ExecuteStep();
 
 		void StatementReset();
 
@@ -25,27 +33,27 @@ public:
 		void Bind(size_t id, T val);
 
 private:
-		std::string cmd;
-		bool finalized;
-		sqlite3_stmt *statement;
+		std::string cmd_;
+		bool finalized_;
+		sqlite3_stmt *statement_;
+
+		void ExecuteMany(int num);
 };
 
 class ReadQuery : public Query{
 public:
-		ReadQuery(std::string q);
+		ReadQuery(const std::string& q) : Query(q), statement_(nullptr){}
 
 		template<typename T>
-		T GetColumn(int col_num) {
-		}
+		T GetColumn(int col_num);
 
 private:
-		sqlite3_stmt *statement;
+		sqlite3_stmt *statement_;
 };
 
-template <typename T>
 class WriteQuery : public Query{
 public:
-		WriteQuery(std::string q);
+		WriteQuery(const std::string& q) : Query(q), statement_(nullptr) {}
 private:
-		sqlite3_stmt *statement;
+		sqlite3_stmt *statement_;
 };
