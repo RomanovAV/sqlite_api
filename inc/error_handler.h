@@ -17,4 +17,10 @@ public:
 		}
 };
 
+#define LOG(event) {            \
+    std::cerr << "Event " << event << " occured "      \
+    << __FILE__ << ":" << __LINE__;     \
+}
+
+
 
