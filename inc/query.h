@@ -56,13 +56,16 @@ public:
 			std::vector<T> vals;
 			for(int i  = 0; i < row_limit; ++i)  {
 				int res = ExecuteStep();
-				if (res == SQLITE_DONE || res == SQLITE_OK)
-					break;
-				if (res != SQLITE_ROW) {
+				if (res == SQLITE_ROW || res == SQLITE_OK) {
+					vals.push_back(sqlite3_column_int(statement_, 0));
+					if (res == SQLITE_OK)
+						break;
+				}
+				else {
 					LOG(res);
 					break;
 				}
-				vals.push_back(sqlite3_column_int(statement_, 0));
+
 			}
 			Finalize();
 			return vals;
@@ -73,7 +76,6 @@ public:
 private:
 		template<typename T>
 		T GetColumn(int col_num);
-		std::string cmd_;
 		sqlite3_stmt *statement_;
 };
 
@@ -83,6 +85,5 @@ public:
 		sqlite3_stmt * GetStatement() override;
 		void Prepare(Connection conn) override;
 private:
-		std::string cmd_;
 		sqlite3_stmt *statement_;
 };

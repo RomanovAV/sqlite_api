@@ -37,7 +37,7 @@ void Query::StatementReset() {
 }
 
 void Query::Finalize() {
-	if (SQLiteError::CheckError(sqlite3_finalize, GetStatement()) == SQLITE_OK) {
+	if (!finalized_ && SQLiteError::CheckError(sqlite3_finalize, GetStatement()) == SQLITE_OK) {
 		finalized_ = true;
 	}
 }

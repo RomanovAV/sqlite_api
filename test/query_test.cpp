@@ -10,14 +10,21 @@ TEST(query_test, usual_usage) {
 	q.Prepare(con.GetConnection());
 	q.ExecuteStep();
 	q.Finalize();
-	WriteQuery wq("INSERT INTO test VALUES(1,2,3);");
-	wq.Prepare(con.GetConnection());
-	wq.ExecuteStep();
-	wq.Finalize();
-	/*ReadQuery rq("SELECT * FROM test;");
+	for (int i = 0; i < 10; ++i) {
+		WriteQuery wq("INSERT INTO test VALUES(1,2,3);");
+		wq.Prepare(con.GetConnection());
+		wq.ExecuteStep();
+		wq.Finalize();
+	}
+	ReadQuery rq("SELECT * FROM test;");
 	rq.Prepare(con.GetConnection());
 	rq.ExecuteStep();
 	std::vector<int> a = rq.GetAllColumn<int>(0);
+	ASSERT_EQ(a.size(), 10);
+	ASSERT_EQ(a.at(0), 1);
 	rq.StatementReset();
-	wq.Finalize();*/
+	Query dq("DROP TABLE test;");
+	dq.Prepare(con.GetConnection());
+	dq.ExecuteStep();
+	dq.Finalize();
 }
