@@ -19,7 +19,9 @@ public:
 
     int ExecuteManagingQuery(const std::string &query);
 
-    Connection GetConnection();
+    int CloseConnection();
+
+    Connection& GetConnection();
 
     ~Connector();
 
@@ -28,8 +30,9 @@ private:
                            "PRAGMA cache_size = 200; "
                            "PRAGMA journal_mode = WAL";
     Connection connection_;
+    bool open;
 
     int ApplyDBSettings(const std::string &filename);
 
-    int CloseConnection();
+
 };

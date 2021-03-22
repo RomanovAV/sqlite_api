@@ -5,7 +5,3 @@ TEST(connector, construction) {
     Connector conn("test.db");
     ASSERT_EQ(conn.OpenDB(), 0);
 }
-
-TEST(connector, write_read) {
-
-}

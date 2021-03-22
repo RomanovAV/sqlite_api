@@ -9,7 +9,7 @@
 
 Query::Query(const std::string& q) : cmd_(q), finalized_(false), q_statement_(nullptr)  {}
 
-void Query::Prepare(Connection conn) {
+void Query::Prepare(Connection& conn) {
     sqlite3_prepare_v2(conn.db, cmd_.c_str(), cmd_.size(), &q_statement_, 0);
 }
 
@@ -87,17 +87,18 @@ void Query::Bind<const std::string&>(size_t id, const std::string& val) {
 	sqlite3_bind_text(GetStatement(), id, val.c_str(), -1, SQLITE_STATIC);
 }
 
-template <>
-double ReadQuery::GetColumn(int col_num) {
-	return sqlite3_column_double(GetStatement(), col_num);
-}
-
 sqlite3_stmt *ReadQuery::GetStatement() {
 	return statement_;
 }
 
-void ReadQuery::Prepare(Connection conn) {
+void ReadQuery::Prepare(Connection& conn) {
 	sqlite3_prepare_v2(conn.db, Query::cmd_.c_str(), cmd_.size(), &statement_, 0);
+}
+
+
+template <>
+double ReadQuery::GetColumn(int col_num) {
+	return sqlite3_column_double(GetStatement(), col_num);
 }
 
 template <>
@@ -120,6 +121,7 @@ sqlite3_stmt *WriteQuery::GetStatement() {
 	return statement_;
 }
 
-void WriteQuery::Prepare(Connection conn) {
+void WriteQuery::Prepare(Connection& conn) {
 	sqlite3_prepare_v2(conn.db, Query::cmd_.c_str(), cmd_.size(), &statement_, 0);
 }
+

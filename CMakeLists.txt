@@ -20,4 +20,4 @@ add_executable(DBApi
         src/connector.cpp
         inc/connector.h
         inc/query.h
-        src/query.cpp src/error_handler.cpp inc/error_handler.h)
+        src/query.cpp src/error_handler.cpp inc/error_handler.h src/db_interface.cpp)

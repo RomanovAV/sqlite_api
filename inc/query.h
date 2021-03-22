@@ -18,9 +18,10 @@ enum class QueryState {
 
 class Query {
 public:
+
 		Query(const std::string& q);
 
-		virtual void Prepare(Connection conn);
+		virtual void Prepare(Connection& conn);
 
 		int ExecuteStep();
 
@@ -51,13 +52,19 @@ class ReadQuery : public Query{
 public:
 		explicit ReadQuery(const std::string& q) : Query(q), statement_(nullptr){}
 
+
 		template<typename T>
 		std::vector<T> GetAllColumn(int col_num){
+			return GetColumn<T>(col_num, row_limit);
+		}
+
+		template<typename T>
+		std::vector<T> GetColumn(int col_num, int row_count){
 			std::vector<T> vals;
-			for(int i  = 0; i < row_limit; ++i)  {
+			for(int i  = 0; i < row_count && i < row_limit; ++i)  {
 				int res = ExecuteStep();
 				if (res == SQLITE_ROW || res == SQLITE_OK) {
-					vals.push_back(sqlite3_column_int(statement_, 0));
+					vals.push_back(GetColumn<T>(col_num));
 					if (res == SQLITE_OK)
 						break;
 				}
@@ -65,25 +72,33 @@ public:
 					LOG(res);
 					break;
 				}
-
 			}
-			Finalize();
 			return vals;
 		}
-		sqlite3_stmt * GetStatement() override;
-		void Prepare(Connection conn) override;
 
-private:
 		template<typename T>
 		T GetColumn(int col_num);
+
+		sqlite3_stmt * GetStatement() override;
+
+		void Prepare(Connection& conn) override;
+
+private:
 		sqlite3_stmt *statement_;
 };
 
-class WriteQuery : public Query{
+class WriteQuery : public Query {
 public:
-		WriteQuery(const std::string& q) : Query(q), statement_(nullptr) {}
-		sqlite3_stmt * GetStatement() override;
-		void Prepare(Connection conn) override;
+		explicit WriteQuery(const std::string& q) : Query(q), statement_(nullptr) {}
+
+		sqlite3_stmt *GetStatement() override;
+
+		void Prepare(Connection& conn) override;
+
 private:
 		sqlite3_stmt *statement_;
+};
+
+class ServiceQuery : public Query {
+
 };
