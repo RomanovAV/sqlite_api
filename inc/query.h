@@ -6,6 +6,7 @@
 #include "sqlite3.h"
 #include <vector>
 #include "error_handler.h"
+#include <memory>
 
 
 enum class QueryState {
@@ -21,7 +22,7 @@ public:
 
 		Query(const std::string& q);
 
-		virtual void Prepare(Connection& conn);
+		virtual void Prepare(Connector& conn);
 
 		int ExecuteStep();
 
@@ -37,20 +38,22 @@ public:
 
 		static const int row_limit = 4096;
 
-		virtual sqlite3_stmt* GetStatement();
-
+		virtual sqlite3_stmt * GetStatement();
+		virtual sqlite3_stmt* PrepareStmt(Connector& conn);
 		virtual ~Query() = default;
+
 		std::string cmd_;
 
 private:
+
 		bool finalized_;
-		sqlite3_stmt *q_statement_;
+		std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)> _q_statement;
 		void ExecuteMany(int num);
 };
 
 class ReadQuery : public Query{
 public:
-		explicit ReadQuery(const std::string& q) : Query(q), statement_(nullptr){}
+		explicit ReadQuery(const std::string& q) : Query(q), _statement(nullptr, sqlite3_finalize){}
 
 
 		template<typename T>
@@ -81,22 +84,22 @@ public:
 
 		sqlite3_stmt * GetStatement() override;
 
-		void Prepare(Connection& conn) override;
+		void Prepare(Connector& conn) override;
 
 private:
-		sqlite3_stmt *statement_;
+		std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)> _statement;
 };
 
 class WriteQuery : public Query {
 public:
-		explicit WriteQuery(const std::string& q) : Query(q), statement_(nullptr) {}
+		explicit WriteQuery(const std::string& q) : Query(q), _statement(nullptr, sqlite3_finalize){}
 
-		sqlite3_stmt *GetStatement() override;
+		sqlite3_stmt * GetStatement() override;
 
-		void Prepare(Connection& conn) override;
+		void Prepare(Connector& conn) override;
 
 private:
-		sqlite3_stmt *statement_;
+		std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)>  _statement;
 };
 
 class ServiceQuery : public Query {

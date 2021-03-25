@@ -7,10 +7,16 @@
 #include "error_handler.h"
 
 
-Query::Query(const std::string& q) : cmd_(q), finalized_(false), q_statement_(nullptr)  {}
+Query::Query(const std::string& q) : cmd_(q), finalized_(false), _q_statement(nullptr, sqlite3_finalize) {}
 
-void Query::Prepare(Connection& conn) {
-    sqlite3_prepare_v2(conn.db, cmd_.c_str(), cmd_.size(), &q_statement_, 0);
+sqlite3_stmt* Query::PrepareStmt(Connector& conn) {
+	sqlite3_stmt* tmp = nullptr;
+	sqlite3_prepare_v2(conn.db.get(), Query::cmd_.c_str(), cmd_.size(), &tmp, 0);
+	return tmp;
+}
+
+void Query::Prepare(Connector& conn) {
+	_q_statement.reset(PrepareStmt(conn));
 }
 
 int Query::ExecuteStep() {
@@ -45,13 +51,13 @@ void Query::Finalize() {
 template<>
 void Query::Bind<int>(const std::vector<int>& vals) {
 	int i  = 0;
-	for(auto val : vals) {
+	for(const auto& val : vals) {
 		sqlite3_bind_int(GetStatement(), i, val);
 	}
 }
 
-sqlite3_stmt *Query::GetStatement() {
-	return q_statement_;
+sqlite3_stmt* Query::GetStatement() {
+	return _q_statement.get();
 }
 
 template<>
@@ -65,7 +71,7 @@ void Query::Bind<double>(const std::vector<double>& vals) {
 template<>
 void Query::Bind<std::string>(const std::vector<std::string>& vals) {
 	int i  = 0;
-	for(auto val : vals) {
+	for(const auto& val : vals) {
 		int res = sqlite3_bind_text(GetStatement(), i, val.c_str(), -1, SQLITE_STATIC);
 		if (res != SQLITE_OK)
 			break;
@@ -87,12 +93,12 @@ void Query::Bind<const std::string&>(size_t id, const std::string& val) {
 	sqlite3_bind_text(GetStatement(), id, val.c_str(), -1, SQLITE_STATIC);
 }
 
-sqlite3_stmt *ReadQuery::GetStatement() {
-	return statement_;
+sqlite3_stmt* ReadQuery::GetStatement() {
+	return _statement.get();
 }
 
-void ReadQuery::Prepare(Connection& conn) {
-	sqlite3_prepare_v2(conn.db, Query::cmd_.c_str(), cmd_.size(), &statement_, 0);
+void ReadQuery::Prepare(Connector& conn) {
+	_statement.reset(PrepareStmt(conn));
 }
 
 
@@ -117,11 +123,11 @@ std::string ReadQuery::GetColumn(int col_num) {
 	return ss.str();
 }
 
-sqlite3_stmt *WriteQuery::GetStatement() {
-	return statement_;
+sqlite3_stmt* WriteQuery::GetStatement() {
+	return _statement.get();
 }
 
-void WriteQuery::Prepare(Connection& conn) {
-	sqlite3_prepare_v2(conn.db, Query::cmd_.c_str(), cmd_.size(), &statement_, 0);
+void WriteQuery::Prepare(Connector& conn) {
+	_statement.reset(PrepareStmt(conn));
 }
 

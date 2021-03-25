@@ -8,16 +8,16 @@ public:
 			TestConnection() : con(Connector("../../test/test.sqlite")){
 			con.OpenDB();
 			Query q("CREATE TABLE IF NOT EXISTS test(a,b,c);");
-			q.Prepare(con.GetConnection());
+			q.Prepare(con);
 			q.ExecuteStep();
 			q.Finalize();
 		}
-		Connection& GetConnection() {
-		return con.GetConnection();
+		Connector& GetConnection() {
+		return con;
 		}
 		~TestConnection() {
 			Query dq("DROP TABLE test;");
-			dq.Prepare(con.GetConnection());
+			dq.Prepare(con);
 			dq.ExecuteStep();
 			dq.Finalize();
 		}
