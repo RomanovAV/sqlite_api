@@ -9,8 +9,6 @@ class Connector {
 public:
     explicit Connector(const std::string& name) : _name(std::move(name)) {};
 
-    int OpenDB();
-
     int ExecuteManagingQuery(const std::string &query);
 
     int CloseConnection();
@@ -22,7 +20,9 @@ public:
     Connector& operator=(const Connector&) = delete;
     Connector& operator=(Connector&&) = delete;
 
-    std::shared_ptr<sqlite3> db;
+		void OpenDB();
+
+		std::shared_ptr<sqlite3> GetDB();
 
 private:
     const char* _SETTINGS = "PRAGMA page_size = 4096; "
@@ -31,7 +31,7 @@ private:
 
 		const std::string _name;
     bool _open;
+		std::shared_ptr<sqlite3> _db;
 
     int ApplyDBSettings(const std::string &filename);
-		sqlite3* Init();
 };

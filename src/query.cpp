@@ -11,7 +11,7 @@ Query::Query(const std::string& q) : cmd_(q), finalized_(false), _q_statement(nu
 
 sqlite3_stmt* Query::PrepareStmt(Connector& conn) {
 	sqlite3_stmt* tmp = nullptr;
-	sqlite3_prepare_v2(conn.db.get(), Query::cmd_.c_str(), cmd_.size(), &tmp, 0);
+	sqlite3_prepare_v2(conn.GetDB().get(), Query::cmd_.c_str(), cmd_.size(), &tmp, 0);
 	return tmp;
 }
 
@@ -40,12 +40,6 @@ void Query::ExecuteMany(int num) {
 void Query::StatementReset() {
 	if(!finalized_)
 		SQLiteError::CheckError(sqlite3_reset, GetStatement());
-}
-
-void Query::Finalize() {
-	if (!finalized_ && SQLiteError::CheckError(sqlite3_finalize, GetStatement()) == SQLITE_OK) {
-		finalized_ = true;
-	}
 }
 
 template<>

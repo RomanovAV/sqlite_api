@@ -28,8 +28,6 @@ public:
 
 		void StatementReset();
 
-		void Finalize();
-
 		template <typename T>
 		void Bind(const std::vector<T>& vals);
 

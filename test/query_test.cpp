@@ -10,7 +10,6 @@ public:
 			Query q("CREATE TABLE IF NOT EXISTS test(a,b,c);");
 			q.Prepare(con);
 			q.ExecuteStep();
-			q.Finalize();
 		}
 		Connector& GetConnection() {
 		return con;
@@ -19,7 +18,6 @@ public:
 			Query dq("DROP TABLE test;");
 			dq.Prepare(con);
 			dq.ExecuteStep();
-			dq.Finalize();
 		}
 private:
 		Connector con;
@@ -43,7 +41,6 @@ TEST(query_test, usual_usage) {
 	ASSERT_EQ(b.at(0), 2);
 	std::vector<int> c = rq.GetAllColumn<int>(1);
 	ASSERT_EQ(c.at(0), 2);
-	rq.Finalize();
 	rq.StatementReset();
 }
 
@@ -53,7 +50,6 @@ TEST(query_test, empty_table) {
 	rq.Prepare(con.GetConnection());
 	ASSERT_EQ(rq.ExecuteStep(), SQLITE_OK);
 	ASSERT_EQ(rq.GetColumn<int>(1), 0);
-	rq.Finalize();
 	rq.StatementReset();
 }
 
@@ -66,7 +62,6 @@ TEST(DISABLED_query_test, many_values) {
 		WriteQuery wq(os.str());
 		wq.Prepare(con.GetConnection());
 		wq.ExecuteStep();
-		wq.Finalize();
 	}
 	ReadQuery rq("SELECT * FROM test;");
 	rq.Prepare(con.GetConnection());

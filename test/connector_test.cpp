@@ -3,5 +3,6 @@
 
 TEST(connector, construction) {
     Connector conn("test.db");
-    ASSERT_EQ(conn.OpenDB(), 0);
+    conn.OpenDB();
+    ASSERT_TRUE(conn.GetDB().operator bool());
 }
