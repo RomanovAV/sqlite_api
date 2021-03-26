@@ -47,6 +47,10 @@ private:
 		bool finalized_;
 		std::unique_ptr<sqlite3_stmt, decltype(&sqlite3_finalize)> _q_statement;
 		void ExecuteMany(int num);
+
+		void ExecuteAll();
+
+		void ResetPrevious();
 };
 
 class ReadQuery : public Query{

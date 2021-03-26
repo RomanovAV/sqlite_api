@@ -4,17 +4,20 @@
 #include "../inc/connector.h"
 #include "error_handler.h"
 
+OpenFlags operator|(const OpenFlags& a, const OpenFlags& b) {
+	return static_cast<OpenFlags>(static_cast<int>(a) | static_cast<int>(b));
+}
+
 Connector::~Connector() {
-	//CloseConnection();
 }
 
 std::shared_ptr<sqlite3> Connector::GetDB() {
 	return _db;
 }
 
-void Connector::OpenDB() {
+void Connector::OpenDB(const OpenFlags& flags) {
 	sqlite3* tmp = nullptr;
-	auto ret = sqlite3_open_v2(_name.data(), &tmp, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+	auto ret = sqlite3_open_v2(_name.data(), &tmp, static_cast<int>(flags), nullptr);
 	if (ret != SQLITE_OK) {
 		LOG(ret);
 		return;

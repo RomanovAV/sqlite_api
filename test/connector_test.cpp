@@ -3,6 +3,6 @@
 
 TEST(connector, construction) {
     Connector conn("test.db");
-    conn.OpenDB();
+    conn.OpenDB(OpenFlags::READWRITE | OpenFlags::CREATE);
     ASSERT_TRUE(conn.GetDB().operator bool());
 }

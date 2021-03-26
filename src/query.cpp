@@ -30,10 +30,24 @@ void Query::ExecuteMany(int num) {
 		int err;
 		for (int i = 0; i < num; ++i) {
 			err = SQLiteError::CheckError(sqlite3_step, GetStatement());
-			if (err != SQLITE_OK && err != SQLITE_ROW)
+			if (err != SQLITE_DONE && err != SQLITE_ROW)
 				break;
 			StatementReset();
 		}
+	}
+}
+
+void Query::ResetPrevious() {
+	sqlite3_reset(GetStatement());
+	sqlite3_clear_bindings(GetStatement());
+}
+
+void Query::ExecuteAll() {
+	ResetPrevious();
+	int res;
+	while ((res = sqlite3_step(GetStatement())) == SQLITE_ROW) {}
+	if (res != SQLITE_DONE) {
+		LOG(res)
 	}
 }
 

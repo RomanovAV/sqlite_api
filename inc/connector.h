@@ -4,6 +4,19 @@
 #include "sqlite3.h"
 #include <memory>
 
+enum class OpenFlags {
+		READONLY = SQLITE_OPEN_READONLY,
+		READWRITE = SQLITE_OPEN_READWRITE,
+		CREATE = SQLITE_OPEN_CREATE,
+		NOMUTEX = SQLITE_OPEN_NOMUTEX,
+		FULLMUTEX = SQLITE_OPEN_FULLMUTEX,
+		SHAREDCACHE = SQLITE_OPEN_SHAREDCACHE,
+		PRIVATECACH = SQLITE_OPEN_PRIVATECACHE,
+		URI = SQLITE_OPEN_URI
+};
+
+OpenFlags operator|(const OpenFlags& a, const OpenFlags& b);
+
 class Connector {
 
 public:
@@ -20,7 +33,7 @@ public:
     Connector& operator=(const Connector&) = delete;
     Connector& operator=(Connector&&) = delete;
 
-		void OpenDB();
+		void OpenDB(const OpenFlags& flags);
 
 		std::shared_ptr<sqlite3> GetDB();
 

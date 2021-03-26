@@ -6,7 +6,7 @@
 class TestConnection {
 public:
 			TestConnection() : con(Connector("../../test/test.sqlite")){
-			con.OpenDB();
+			con.OpenDB(OpenFlags::READWRITE | OpenFlags::CREATE);
 			Query q("CREATE TABLE IF NOT EXISTS test(a,b,c);");
 			q.Prepare(con);
 			q.ExecuteStep();
